@@ -13,7 +13,7 @@ class Config(BaseModel):
     output_dir: Path
     build_dir: Path
     sources_dir: Path
-    pkgs_dir: Path
+    pkgs_dirs: list[Path]
 
     @model_validator(mode="after")
     def check_output_dir(self) -> Self:
@@ -93,9 +93,10 @@ class Config(BaseModel):
             If pkgs_dir does not exist.
 
         """
-        if not self.pkgs_dir.exists():
-            msg = f"{self.pkgs_dir.resolve()} does not exist. Please create it first."
-            raise FileNotFoundError(msg)
+        for pkgs_dir in self.pkgs_dirs:
+            if not pkgs_dir.exists():
+                msg = f"{pkgs_dir.resolve()} does not exist. Please create it first."
+                raise FileNotFoundError(msg)
 
         return self
 
