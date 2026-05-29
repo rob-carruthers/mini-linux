@@ -1,0 +1,4 @@
+output_dir = "./output"
+build_dir = "./build"
+sources_dir = "./sources"
+pkgs_dir = "./pkgs"

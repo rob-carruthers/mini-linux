@@ -1,0 +1,24 @@
+[project]
+name = "mini-linux"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Rob Carruthers", email = "12486527+rob-carruthers@users.noreply.github.com" }
+]
+requires-python = ">=3.13"
+dependencies = ["packaging", "pydantic", "requests"]
+
+[project.scripts]
+mini-linux = "mini_linux:main"
+
+[build-system]
+requires = ["uv_build>=0.11.16,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+line-length = 100
+preview = true
+select = ["ALL"]
+fixable = ["ALL"]
+ignore = ["CPY", "TD002", "TD003"]

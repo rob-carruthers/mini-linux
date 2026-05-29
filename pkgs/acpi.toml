@@ -1,0 +1,5 @@
+[package]
+name = "acpi"
+version = "1.8"
+sources = ["https://downloads.sourceforge.net/acpiclient/{name}-{version}.tar.gz"]
+checksums = ["e64c6e00b53cd797427ea32a160513425b03ed4f077733f71f1f09ff340f230b"]
