@@ -7,8 +7,25 @@ from typing import Self
 from pydantic import BaseModel, model_validator
 
 
-class Config(BaseModel):
-    """Configuration variables from `config.toml`."""
+class PathsConfig(BaseModel):
+    """Path configuration variables.
+
+    Attributes
+    ----------
+
+    output_dir : Path
+        Where the final root image should be outputted.
+
+    build_dir : Path
+        Where packages should be built.
+
+    sources_dir : Path
+        Where source archives retrieved from the Internet should be stored.
+
+    pkgs_dir : list[Path]
+        Locations where .toml package files should be found.
+
+    """
 
     output_dir: Path
     build_dir: Path
@@ -99,6 +116,12 @@ class Config(BaseModel):
                 raise FileNotFoundError(msg)
 
         return self
+
+
+class Config(BaseModel):
+    """Configuration variables from `config.toml`."""
+
+    paths: PathsConfig
 
 
 config_file = Path("./config.toml")

@@ -114,12 +114,12 @@ class Package(BaseModel):
 
         with tarfile.open(self.fetched_sources[0]) as tf:
             top_level = find_top_level_source_dir(tf)
-            tf.extractall(CONFIG.build_dir, filter="data")
+            tf.extractall(CONFIG.paths.build_dir, filter="data")
 
         self.build_dir = top_level
 
 
-p = Package.from_file(CONFIG.pkgs_dir / "acpi.toml")
+p = Package.from_file(CONFIG.paths.pkgs_dirs[0] / "acpi.toml")
 p.fetch()
 p.unpack()
 print(p.build_dir)

@@ -28,7 +28,7 @@ def download_source(url: str, timeout: int = 10) -> Path:
     """
     filename = url.rsplit("/", maxsplit=1)[-1]
 
-    output_path = CONFIG.sources_dir / filename
+    output_path = CONFIG.paths.sources_dir / filename
     if output_path.exists():
         return output_path
 
