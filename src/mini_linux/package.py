@@ -1,5 +1,6 @@
 """Package operations and resolving dependencies."""
 
+import tarfile
 import tomllib
 from pathlib import Path
 
@@ -11,6 +12,31 @@ from mini_linux.config import CONFIG
 from .fetch import check_sha256sum, download_source
 
 
+def find_top_level_source_dir(tf: tarfile.TarFile) -> str:
+    """Find the top-level directory in a .tar file.
+
+    (i.e. the unpacked source directory to traverse into to build.)
+
+    Returns
+    -------
+    str
+        The name of the unpacked directory.
+
+    """
+    top_level_dirs: set[str] = set()
+
+    for m in tf.getmembers():
+        parts = m.name.lstrip("/").split("/")
+        if len(parts) > 1 or m.isdir():
+            top_level_dirs.add(parts[0])
+
+    if len(top_level_dirs) > 1:
+        msg = "Multiple top-level dirs in tar file is not supported."
+        raise NotImplementedError(msg)
+
+    return next(iter(top_level_dirs))
+
+
 class Package(BaseModel):
     """A package with version, source files, and checksums."""
 
@@ -19,6 +45,7 @@ class Package(BaseModel):
     sources: list[str]
     checksums: list[str]
     fetched_sources: list[Path] | None = None
+    build_dir: str | None = None
 
     @classmethod
     def from_file(cls, fp: str | Path) -> "Package":
@@ -80,7 +107,19 @@ class Package(BaseModel):
         if len(self.fetched_sources) > 1:
             raise NotImplementedError
 
+        # TODO: What if a source file is not a tar file?
+        if not any("tar" in suffix for suffix in self.fetched_sources[0].suffixes):
+            msg = "non-tar files are not yet implemented"
+            raise NotImplementedError(msg)
+
+        with tarfile.open(self.fetched_sources[0]) as tf:
+            top_level = find_top_level_source_dir(tf)
+            tf.extractall(CONFIG.build_dir, filter="data")
+
+        self.build_dir = top_level
+
 
 p = Package.from_file(CONFIG.pkgs_dir / "acpi.toml")
 p.fetch()
 p.unpack()
+print(p.build_dir)
